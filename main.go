@@ -15,13 +15,11 @@ func main(){
 	}
 
 	port := os.Getenv("PORT")
-	filePathRoot := "."
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/app/*", http.StripPrefix("/app", http.FileServer(http.Dir(filePathRoot))))
-	mux.HandleFunc("GET /v1/healthz", handleReadiness)
-	mux.HandleFunc("GET /v1/err", handleErr)
+	mux.HandleFunc("GET /v1/healthz", handlerReadiness)
+	mux.HandleFunc("GET /v1/err", handlerErr)
 
 	server := &http.Server{
 		Addr: ":" + port,
