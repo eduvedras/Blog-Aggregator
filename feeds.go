@@ -9,13 +9,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request){
+func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User){
 	defer r.Body.Close()
 
 	decoder := json.NewDecoder(r.Body)
 
 	params := struct{
 		Name string `json:"name"`
+		URL string `json:"url"`
 	}{}
 	err := decoder.Decode(&params)
 	if err != nil{
@@ -23,20 +24,18 @@ func (cfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	user, err := cfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	feed, err := cfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID: uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Name: params.Name,
+		Url: params.URL,
+		UserID: user.ID,
 	})
 	if err != nil{
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create user")
+		respondWithError(w, http.StatusInternalServerError, "Couldn't create feed")
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
-}
-
-func (cfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User){
-	respondWithJSON(w, http.StatusOK, databaseUserToUser(user))
+	respondWithJSON(w, http.StatusOK, databaseFeedToFeed(feed))
 }
