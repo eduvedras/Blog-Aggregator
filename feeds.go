@@ -39,3 +39,18 @@ func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 
 	respondWithJSON(w, http.StatusOK, databaseFeedToFeed(feed))
 }
+
+func (cfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request){
+	databaseFeeds, err := cfg.DB.GetFeeds(r.Context())
+	if err != nil{
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get users")
+		return
+	}
+
+	feeds := []Feed{}
+	for _, databaseFeed := range databaseFeeds{
+		feeds = append(feeds, databaseFeedToFeed(databaseFeed))
+	}
+	
+	respondWithJSON(w, http.StatusOK,feeds)
+}
