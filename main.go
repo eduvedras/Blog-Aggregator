@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
 	"github.com/joho/godotenv"
@@ -29,8 +30,9 @@ func main(){
 		log.Fatal(err)
 	}
 
+	dbQueries := database.New(db)
 	cfg := apiConfig{
-		DB: database.New(db),
+		DB: dbQueries,
 	}
 
 	mux := http.NewServeMux()
@@ -52,6 +54,10 @@ func main(){
 		Addr: ":" + port,
 		Handler: mux,
 	}
+
+	const collectionConcurrency = 10
+	const collectionInterval = time.Minute
+	go startScraping(dbQueries, collectionConcurrency, collectionInterval)
 
 	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())
