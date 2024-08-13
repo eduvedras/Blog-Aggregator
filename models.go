@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
@@ -22,6 +23,7 @@ type Feed struct {
 	Name string `json:"name"`
 	Url string `json:"url"`
 	User_id uuid.UUID `json:"user_id"`
+	LastFetchedAt *time.Time `json:"last_fetched_at"`
 }
 
 type FeedFollow struct{
@@ -50,6 +52,7 @@ func databaseFeedToFeed(feed database.Feed) Feed {
 		Name: feed.Name,
 		Url: feed.Url,
 		User_id: feed.UserID,
+		LastFetchedAt: nullTimeToTimePtr(feed.LastFetchedAt),
 	}
 }
 
@@ -77,4 +80,11 @@ func databaseFeedFollowsToFeedFollows(databaseFeedFollows []database.FeedFollow)
 		feedFollows = append(feedFollows, databaseFeedFollowToFeedFollow(databaseFeedFollow))
 	}
 	return feedFollows
+}
+
+func nullTimeToTimePtr(t sql.NullTime) *time.Time {
+	if t.Valid {
+		return &t.Time
+	}
+	return nil
 }
