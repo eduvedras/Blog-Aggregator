@@ -10,27 +10,27 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User){
+func (cfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 
-	params := struct{
+	params := struct {
 		FeedId uuid.UUID `json:"feed_id"`
 	}{}
 	err := decoder.Decode(&params)
-	if err != nil{
+	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode the parameters")
 		return
 	}
 
 	databaseFeedFollow, err := cfg.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
-		ID: uuid.New(),
+		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
-		UserID: user.ID,
-		FeedID: params.FeedId,
+		UserID:    user.ID,
+		FeedID:    params.FeedId,
 	})
-	if err != nil{
+	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create the feed follow")
 		fmt.Println(err)
 		return
@@ -39,20 +39,20 @@ func (cfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Req
 	respondWithJSON(w, http.StatusOK, databaseFeedFollowToFeedFollow(databaseFeedFollow))
 }
 
-func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User){
+func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	feedFollowIdString := r.PathValue("feedFollowID")
 
 	feedFollowId, err := uuid.Parse(feedFollowIdString)
-	if err != nil{
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid feed follow ID")
 		return
 	}
 
 	err = cfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
-		ID: feedFollowId,
+		ID:     feedFollowId,
 		UserID: user.ID,
 	})
-	if err != nil{
+	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't delete feed follow")
 		return
 	}
@@ -60,9 +60,9 @@ func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Req
 	respondWithJSON(w, http.StatusOK, struct{}{})
 }
 
-func (cfg *apiConfig) handlerGetFeedFollowsOfUser(w http.ResponseWriter, r *http.Request, user database.User){
+func (cfg *apiConfig) handlerGetFeedFollowsOfUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	databaseFeedFollows, err := cfg.DB.GetFeedFollowsOfUser(r.Context(), user.ID)
-	if err != nil{
+	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get feed follows")
 		return
 	}

@@ -16,17 +16,17 @@ type apiConfig struct {
 	DB *database.Queries
 }
 
-func main(){
+func main() {
 	err := godotenv.Load()
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	port := os.Getenv("PORT")
 	dbURL := os.Getenv("CONN_STRING")
-	
+
 	db, err := sql.Open("postgres", dbURL)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -45,7 +45,7 @@ func main(){
 
 	mux.HandleFunc("POST /v1/feeds", cfg.middlewareAuth(cfg.handlerCreateFeed))
 	mux.HandleFunc("GET /v1/feeds", cfg.handlerGetFeeds)
-	
+
 	mux.HandleFunc("POST /v1/feed_follows", cfg.middlewareAuth(cfg.handlerCreateFeedFollow))
 	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", cfg.middlewareAuth(cfg.handlerDeleteFeedFollow))
 	mux.HandleFunc("GET /v1/feed_follows", cfg.middlewareAuth(cfg.handlerGetFeedFollowsOfUser))
@@ -53,7 +53,7 @@ func main(){
 	mux.HandleFunc("GET /v1/posts", cfg.middlewareAuth(cfg.handlerGetPostsByUser))
 
 	server := &http.Server{
-		Addr: ":" + port,
+		Addr:    ":" + port,
 		Handler: mux,
 	}
 
