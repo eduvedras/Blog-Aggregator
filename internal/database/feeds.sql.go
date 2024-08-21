@@ -50,11 +50,16 @@ func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, e
 }
 
 const getFeeds = `-- name: GetFeeds :many
-SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds
+SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds ORDER BY created_at ASC LIMIT $1 OFFSET $2
 `
 
-func (q *Queries) GetFeeds(ctx context.Context) ([]Feed, error) {
-	rows, err := q.db.QueryContext(ctx, getFeeds)
+type GetFeedsParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetFeeds(ctx context.Context, arg GetFeedsParams) ([]Feed, error) {
+	rows, err := q.db.QueryContext(ctx, getFeeds, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

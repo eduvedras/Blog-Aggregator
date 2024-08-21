@@ -4,7 +4,7 @@ VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: GetFeeds :many
-SELECT * FROM feeds;
+SELECT * FROM feeds ORDER BY created_at ASC LIMIT $1 OFFSET $2;
 
 -- name: MarkFeedFetch :one
 UPDATE feeds

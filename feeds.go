@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
@@ -59,7 +61,16 @@ func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 }
 
 func (cfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
-	databaseFeeds, err := cfg.DB.GetFeeds(r.Context())
+	limit, offset, err := getLimitAndOffset(r)
+	if err == nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	databaseFeeds, err := cfg.DB.GetFeeds(r.Context(), database.GetFeedsParams{
+		Limit:  int32(limit),
+		Offset: int32(offset)})
+
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get users")
 		return

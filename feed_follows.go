@@ -61,7 +61,17 @@ func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Req
 }
 
 func (cfg *apiConfig) handlerGetFeedFollowsOfUser(w http.ResponseWriter, r *http.Request, user database.User) {
-	databaseFeedFollows, err := cfg.DB.GetFeedFollowsOfUser(r.Context(), user.ID)
+	limit, offset, err := getLimitAndOffset(r)
+	if err == nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	databaseFeedFollows, err := cfg.DB.GetFeedFollowsOfUser(r.Context(), database.GetFeedFollowsOfUserParams{
+		Limit:  int32(limit),
+		Offset: int32(offset),
+		UserID: user.ID})
+
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get feed follows")
 		return
