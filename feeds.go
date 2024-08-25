@@ -2,13 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"net/http"
-	"strconv"
-	"time"
-
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
 	"github.com/google/uuid"
+	"net/http"
+	"time"
 )
 
 func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -62,7 +59,7 @@ func (cfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 
 func (cfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	limit, offset, err := getLimitAndOffset(r)
-	if err == nil {
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
