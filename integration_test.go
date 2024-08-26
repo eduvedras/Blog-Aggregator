@@ -12,7 +12,7 @@ import (
 
 const host = "localhost:8080/v1"
 
-func TestCreateAndGetUser(t *testing.T) {
+func TestIntegration(t *testing.T) {
 	cases := []struct {
 		name     string
 		feedName string
@@ -105,13 +105,53 @@ func TestCreateAndGetUser(t *testing.T) {
 			resGetFeedFollows := []FeedFollow{}
 			err = cmdOutput(getFeedFollowsCmd, &resGetFeedFollows)
 			if err != nil {
-				fmt.Println(getFeedFollowsCmd)
 				t.Error(err)
 				return
 			}
 
 			if !contains(resGetFeedFollows, resCreateFeed.FeedFollow) {
 				t.Errorf("Feed follow %v from create feed command is not inside slice of feed follows from get feed follows command %v", resCreateFeed.FeedFollow, resGetFeedFollows)
+				return
+			}
+
+			deleteFeedFollowCmd := exec.Command("curl", "-X", "DELETE", fmt.Sprintf("%v/feed_follows/%v", host, resCreateFeed.FeedFollow.ID), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
+			err = deleteFeedFollowCmd.Run()
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			getFeedFollowsCmd = exec.Command("curl", "-X", "GET", fmt.Sprintf("%v/feed_follows", host), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
+			resGetFeedFollows = []FeedFollow{}
+			err = cmdOutput(getFeedFollowsCmd, &resGetFeedFollows)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if contains(resGetFeedFollows, resCreateFeed.FeedFollow) {
+				t.Errorf("Feed follow %v was not deleted", resCreateFeed.FeedFollow)
+				return
+			}
+
+			createFeedFollowCmd := exec.Command("curl", "-X", "POST", "-d", fmt.Sprintf("{\"feed_id\": \"%s\"}", resCreateFeed.Feed.ID), fmt.Sprintf("%v/feed_follows", host), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
+			resCreateFeedFollow := FeedFollow{}
+			err = cmdOutput(createFeedFollowCmd, &resCreateFeedFollow)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			getFeedFollowsCmd = exec.Command("curl", "-X", "GET", fmt.Sprintf("%v/feed_follows", host), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
+			resGetFeedFollows = []FeedFollow{}
+			err = cmdOutput(getFeedFollowsCmd, &resGetFeedFollows)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if !contains(resGetFeedFollows, resCreateFeedFollow) {
+				t.Errorf("Feed follow %v from create feed follow command is not inside slice of feed follows from get feed follows command %v", resCreateFeed.FeedFollow, resGetFeedFollows)
 				return
 			}
 		})
