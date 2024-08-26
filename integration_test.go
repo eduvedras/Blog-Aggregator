@@ -101,10 +101,11 @@ func TestCreateAndGetUser(t *testing.T) {
 			}
 
 			//Feed follows integration tests
-			/*getFeedFollowsCmd := exec.Command("curl", "-X", "GET", fmt.Sprintf("%v/feed_follows", host), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
+			getFeedFollowsCmd := exec.Command("curl", "-X", "GET", fmt.Sprintf("%v/feed_follows", host), "-H", fmt.Sprintf("Authorization: ApiKey %s", resCreateUser.ApiKey))
 			resGetFeedFollows := []FeedFollow{}
 			err = cmdOutput(getFeedFollowsCmd, &resGetFeedFollows)
 			if err != nil {
+				fmt.Println(getFeedFollowsCmd)
 				t.Error(err)
 				return
 			}
@@ -112,7 +113,7 @@ func TestCreateAndGetUser(t *testing.T) {
 			if !contains(resGetFeedFollows, resCreateFeed.FeedFollow) {
 				t.Errorf("Feed follow %v from create feed command is not inside slice of feed follows from get feed follows command %v", resCreateFeed.FeedFollow, resGetFeedFollows)
 				return
-			}*/
+			}
 		})
 	}
 }

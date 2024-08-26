@@ -62,7 +62,7 @@ func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Req
 
 func (cfg *apiConfig) handlerGetFeedFollowsOfUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	limit, offset, err := getLimitAndOffset(r)
-	if err == nil {
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
