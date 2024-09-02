@@ -17,22 +17,30 @@ type apiConfig struct {
 }
 
 func main() {
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("warning: assuming default configuration. .env unreachable: %v", err)
 	}
 
 	port := os.Getenv("PORT")
-	dbURL := os.Getenv("CONN_STRING")
-
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatal(err)
+	if port == "" {
+		log.Fatal("PORT environment is not set")
 	}
 
-	dbQueries := database.New(db)
-	cfg := apiConfig{
-		DB: dbQueries,
+	cfg := apiConfig{}
+
+	dbURL := os.Getenv("CONN_STRING")
+	if dbURL == "" {
+		log.Printf("CONN_STRING environment variable is not set")
+		log.Printf("Running without CRUD endpoints")
+	} else {
+		db, err := sql.Open("postgres", dbURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		dbQueries := database.New(db)
+		cfg.DB = dbQueries
 	}
 
 	mux := http.NewServeMux()
@@ -59,7 +67,7 @@ func main() {
 
 	const collectionConcurrency = 10
 	const collectionInterval = time.Minute
-	go startScraping(dbQueries, collectionConcurrency, collectionInterval)
+	go startScraping(cfg.DB, collectionConcurrency, collectionInterval)
 
 	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())
