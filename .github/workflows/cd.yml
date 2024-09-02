@@ -42,4 +42,4 @@ jobs:
               run: "gcloud info"
 
             - name: "Build and push Docker image"
-              run: "gcloud builds submit --tag us-central1-docker.pkg.dev/notely-432609/notely-ar-repo/blog-aggregator:latest ."
+              run: "gcloud builds submit --tag europe-southwest1-docker.pkg.dev/blog-aggregator-434208/blog-aggregator-ar-repo/blog-aggregator:latest ."
