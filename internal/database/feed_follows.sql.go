@@ -8,22 +8,20 @@ package database
 import (
 	"context"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const createFeedFollow = `-- name: CreateFeedFollow :one
 INSERT INTO feed_follows (id, created_at, updated_at, user_id, feed_id)
-VALUES ($1, $2, $3, $4, $5)
+VALUES (?, ?, ?, ?, ?)
 RETURNING id, created_at, updated_at, user_id, feed_id
 `
 
 type CreateFeedFollowParams struct {
-	ID        uuid.UUID
+	ID        interface{}
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	UserID    uuid.UUID
-	FeedID    uuid.UUID
+	UserID    interface{}
+	FeedID    interface{}
 }
 
 func (q *Queries) CreateFeedFollow(ctx context.Context, arg CreateFeedFollowParams) (FeedFollow, error) {
@@ -47,12 +45,12 @@ func (q *Queries) CreateFeedFollow(ctx context.Context, arg CreateFeedFollowPara
 
 const deleteFeedFollow = `-- name: DeleteFeedFollow :exec
 
-DELETE FROM feed_follows WHERE id = $1 AND user_id = $2
+DELETE FROM feed_follows WHERE id = ? AND user_id = ?
 `
 
 type DeleteFeedFollowParams struct {
-	ID     uuid.UUID
-	UserID uuid.UUID
+	ID     interface{}
+	UserID interface{}
 }
 
 func (q *Queries) DeleteFeedFollow(ctx context.Context, arg DeleteFeedFollowParams) error {
@@ -62,13 +60,13 @@ func (q *Queries) DeleteFeedFollow(ctx context.Context, arg DeleteFeedFollowPara
 
 const getFeedFollowsOfUser = `-- name: GetFeedFollowsOfUser :many
 
-SELECT id, created_at, updated_at, user_id, feed_id FROM feed_follows WHERE user_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3
+SELECT id, created_at, updated_at, user_id, feed_id FROM feed_follows WHERE user_id = ? ORDER BY created_at ASC LIMIT ? OFFSET ?
 `
 
 type GetFeedFollowsOfUserParams struct {
-	UserID uuid.UUID
-	Limit  int32
-	Offset int32
+	UserID interface{}
+	Limit  int64
+	Offset int64
 }
 
 func (q *Queries) GetFeedFollowsOfUser(ctx context.Context, arg GetFeedFollowsOfUserParams) ([]FeedFollow, error) {

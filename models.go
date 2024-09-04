@@ -35,8 +35,9 @@ type FeedFollow struct {
 }
 
 func databaseUserToUser(user database.User) User {
+	uid, _ := uuid.Parse(user.ID.(string))
 	return User{
-		ID:        user.ID,
+		ID:        uid,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		Name:      user.Name,
@@ -45,13 +46,15 @@ func databaseUserToUser(user database.User) User {
 }
 
 func databaseFeedToFeed(feed database.Feed) Feed {
+	feedUID, _ := uuid.Parse(feed.ID.(string))
+	feedUserUID, _ := uuid.Parse(feed.UserID.(string))
 	return Feed{
-		ID:            feed.ID,
+		ID:            feedUID,
 		CreatedAt:     feed.CreatedAt,
 		UpdatedAt:     feed.UpdatedAt,
 		Name:          feed.Name,
 		Url:           feed.Url,
-		User_id:       feed.UserID,
+		User_id:       feedUserUID,
 		LastFetchedAt: nullTimeToTimePtr(feed.LastFetchedAt),
 	}
 }
@@ -65,10 +68,13 @@ func databaseFeedsToFeeds(databaseFeeds []database.Feed) []Feed {
 }
 
 func databaseFeedFollowToFeedFollow(databaseFeedFollow database.FeedFollow) FeedFollow {
+	feedFollowUid, _ := uuid.Parse(databaseFeedFollow.ID.(string))
+	feedFollowFeedUid, _ := uuid.Parse(databaseFeedFollow.FeedID.(string))
+	feedFollowUserUid, _ := uuid.Parse(databaseFeedFollow.UserID.(string))
 	return FeedFollow{
-		ID:        databaseFeedFollow.ID,
-		FeedID:    databaseFeedFollow.FeedID,
-		UserID:    databaseFeedFollow.UserID,
+		ID:        feedFollowUid,
+		FeedID:    feedFollowFeedUid,
+		UserID:    feedFollowUserUid,
 		CreatedAt: databaseFeedFollow.CreatedAt,
 		UpdatedAt: databaseFeedFollow.UpdatedAt,
 	}
@@ -94,15 +100,16 @@ type Post struct {
 }
 
 func databasePostToPost(post database.Post) Post {
+	postId, _ := uuid.Parse(post.ID.(string))
 	return Post{
-		ID:          post.ID,
+		ID:          postId,
 		CreatedAt:   post.CreatedAt,
 		UpdatedAt:   post.UpdatedAt,
 		Title:       post.Title,
 		Url:         post.Url,
 		Description: nullStringToStringPtr(post.Description),
 		PublishedAt: nullTimeToTimePtr(post.PublishedAt),
-		FeedID:      post.FeedID,
+		FeedID:      post.FeedID.(uuid.UUID),
 	}
 }
 

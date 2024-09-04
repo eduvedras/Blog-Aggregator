@@ -16,7 +16,7 @@ func (cfg *apiConfig) handlerGetPostsByUser(w http.ResponseWriter, r *http.Reque
 
 	posts, err := cfg.DB.GetPostsByUser(r.Context(), database.GetPostsByUserParams{
 		UserID: user.ID,
-		Limit:  int32(limit),
+		Limit:  int64(limit),
 	})
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get posts for user")

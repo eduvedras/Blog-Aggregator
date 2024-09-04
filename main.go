@@ -9,7 +9,8 @@ import (
 
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+	//_ "github.com/lib/pq"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 type apiConfig struct {
@@ -34,7 +35,7 @@ func main() {
 		log.Printf("CONN_STRING environment variable is not set")
 		log.Printf("Running without CRUD endpoints")
 	} else {
-		db, err := sql.Open("postgres", dbURL)
+		db, err := sql.Open("libsql", dbURL)
 		if err != nil {
 			log.Fatal(err)
 		}

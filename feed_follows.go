@@ -68,8 +68,8 @@ func (cfg *apiConfig) handlerGetFeedFollowsOfUser(w http.ResponseWriter, r *http
 	}
 
 	databaseFeedFollows, err := cfg.DB.GetFeedFollowsOfUser(r.Context(), database.GetFeedFollowsOfUserParams{
-		Limit:  int32(limit),
-		Offset: int32(offset),
+		Limit:  int64(limit),
+		Offset: int64(offset),
 		UserID: user.ID})
 
 	if err != nil {

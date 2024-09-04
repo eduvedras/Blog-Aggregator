@@ -9,25 +9,23 @@ import (
 	"context"
 	"database/sql"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const createPost = `-- name: CreatePost :one
 INSERT INTO posts (id, created_at, updated_at, title, url, description, published_at, feed_id)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING id, created_at, updated_at, title, url, description, published_at, feed_id
 `
 
 type CreatePostParams struct {
-	ID          uuid.UUID
+	ID          interface{}
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
 	Url         string
 	Description sql.NullString
 	PublishedAt sql.NullTime
-	FeedID      uuid.UUID
+	FeedID      interface{}
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -59,14 +57,14 @@ const getPostsByUser = `-- name: GetPostsByUser :many
 
 SELECT posts.id, posts.created_at, posts.updated_at, posts.title, posts.url, posts.description, posts.published_at, posts.feed_id FROM posts
 JOIN feed_follows ON feed_follows.feed_id = posts.feed_id
-WHERE feed_follows.user_id = $1
+WHERE feed_follows.user_id = ?
 ORDER BY published_at DESC
-LIMIT $2
+LIMIT ?
 `
 
 type GetPostsByUserParams struct {
-	UserID uuid.UUID
-	Limit  int32
+	UserID interface{}
+	Limit  int64
 }
 
 func (q *Queries) GetPostsByUser(ctx context.Context, arg GetPostsByUserParams) ([]Post, error) {

@@ -65,8 +65,8 @@ func (cfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	databaseFeeds, err := cfg.DB.GetFeeds(r.Context(), database.GetFeedsParams{
-		Limit:  int32(limit),
-		Offset: int32(offset)})
+		Limit:  int64(limit),
+		Offset: int64(offset)})
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get users")

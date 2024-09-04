@@ -8,23 +8,21 @@ package database
 import (
 	"context"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const createFeed = `-- name: CreateFeed :one
 INSERT INTO feeds (id, created_at, updated_at, name, url, user_id)
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES (?, ?, ?, ?, ?, ?)
 RETURNING id, created_at, updated_at, name, url, user_id, last_fetched_at
 `
 
 type CreateFeedParams struct {
-	ID        uuid.UUID
+	ID        interface{}
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Name      string
 	Url       string
-	UserID    uuid.UUID
+	UserID    interface{}
 }
 
 func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, error) {
@@ -50,12 +48,12 @@ func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, e
 }
 
 const getFeeds = `-- name: GetFeeds :many
-SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds ORDER BY created_at ASC LIMIT $1 OFFSET $2
+SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds ORDER BY created_at ASC LIMIT ? OFFSET ?
 `
 
 type GetFeedsParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int64
+	Offset int64
 }
 
 func (q *Queries) GetFeeds(ctx context.Context, arg GetFeedsParams) ([]Feed, error) {
@@ -90,10 +88,10 @@ func (q *Queries) GetFeeds(ctx context.Context, arg GetFeedsParams) ([]Feed, err
 }
 
 const getNextFeedsToFetch = `-- name: GetNextFeedsToFetch :many
-SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds ORDER BY last_fetched_at ASC NULLS FIRST LIMIT $1
+SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds ORDER BY last_fetched_at ASC NULLS FIRST LIMIT ?
 `
 
-func (q *Queries) GetNextFeedsToFetch(ctx context.Context, limit int32) ([]Feed, error) {
+func (q *Queries) GetNextFeedsToFetch(ctx context.Context, limit int64) ([]Feed, error) {
 	rows, err := q.db.QueryContext(ctx, getNextFeedsToFetch, limit)
 	if err != nil {
 		return nil, err
@@ -126,13 +124,13 @@ func (q *Queries) GetNextFeedsToFetch(ctx context.Context, limit int32) ([]Feed,
 
 const markFeedFetch = `-- name: MarkFeedFetch :one
 UPDATE feeds
-SET last_fetched_at = NOW(),
-updated_at = NOW()
-WHERE id = $1
+SET last_fetched_at = CURRENT_TIMESTAMP,
+updated_at = CURRENT_TIMESTAMP
+WHERE id = ?
 RETURNING id, created_at, updated_at, name, url, user_id, last_fetched_at
 `
 
-func (q *Queries) MarkFeedFetch(ctx context.Context, id uuid.UUID) (Feed, error) {
+func (q *Queries) MarkFeedFetch(ctx context.Context, id interface{}) (Feed, error) {
 	row := q.db.QueryRowContext(ctx, markFeedFetch, id)
 	var i Feed
 	err := row.Scan(
