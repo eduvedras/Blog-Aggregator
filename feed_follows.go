@@ -41,7 +41,6 @@ func (cfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Req
 
 func (cfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	feedFollowIdString := r.PathValue("feedFollowID")
-
 	feedFollowId, err := uuid.Parse(feedFollowIdString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid feed follow ID")
