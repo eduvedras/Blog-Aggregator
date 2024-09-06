@@ -1,29 +1,30 @@
 # Blog-Aggregator
 
-An API that allows users to aggregate all their favorite RSS blogs/feeds in one place. All you need to do is to create an account and follow the feeds you like, if the feed you want does not exist in the database you can create by providing a name and an url. 
+An API that allows users to aggregate all their favorite RSS blogs and feeds in one place. All you need to do is create an account and follow the feeds you like. If the feed you want does not exist in the database, you can create it by providing a name and a URL.
 
-Periodically a scraper will scrape the posts from each feed url and add them to the database so that they can be acessed by the users that follow the feed. 
-
-A command line interface and a graphical user interface are being developed, but for now if you want to interact with the aggregator you will need to make the http requests directly to the API endpoints.
+Periodically, a scraper will retrieve posts from each feed URL and add them to the database, making them accessible to users who follow the feed. A command-line interface and a graphical user interface are under development, but for now, if you want to interact with the aggregator, you will need to make HTTP requests directly to the API endpoints.
 
 ## Motivation
 
-The motivation behind this project appeared from my personal needs, I like to follow several blogs from varied topics ranging from tech to finance but to do this I had to look up to each individual blog and look for the new posts. 
+This project was born out of my personal needs. I like to follow several blogs on topics ranging from technology to finance, but doing so required visiting each individual blog to check for new posts.
 
-By using this tool all the new posts from all the feeds that I like are aggregated into one place solving this problem. Even though there are other tools that tackle this problem most of them are paid or lack features so I decided to build one myself another reason was to hone my programming skills by building a project that requires several concepts such as authentiction, parallel programing, etc...
+By using this tool, all the new posts from the feeds I follow are aggregated in one place, solving this problem. While other tools exist to address this issue, most are paid or lack certain features, so I decided to build one myself. Another motivation was to hone my programming skills by working on a project that involves several key concepts such as authentication, parallel programming, and more.
 
 ### Goal
 
-The goal of this project is to provide a place where the users can aggregate all the posts from their favorite blogs. More concretely we have 4 tables which can be interacted with the API endpoints:
+The goal of this project is to provide a platform where users can aggregate posts from their favorite blogs. Specifically, the system interacts with four main tables via API endpoints:
 
-* users: The users accounts.
-* feeds: The feeds.
-* feed_follows: The table with all the feed_follows, a feed_follow is an object that represents the link between the user and the feed that it follows if the user unfollows this object is deleted.
-* posts: A table with all the posts from all the feeds, each post has a feedId to identify the feed from which it was scraped.
+* users: Stores user account information.
+* feeds: Stores feed data.
+* feed_follows: Represents the relationship between users and the feeds they follow. If a user unfollows a feed, this object is deleted.
+* posts: Stores posts from all feeds, each with a feedId to identify the source feed.
 
 ## Endpoints
+The API is hosted at:
+*https://blog-aggregator-158858990102.europe-southwest1.run.app*
 
-The API is hosted on the url *https://blog-aggregator-158858990102.europe-southwest1.run.app* so before each endpoint you need to put this url to send the request to the server for example `https://blog-aggregator-158858990102.europe-southwest1.run.app/v1/healthz`.
+To interact with the API, prepend this URL to the endpoints. For example, to check the health of the service, use:
+`https://blog-aggregator-158858990102.europe-southwest1.run.app/v1/healthz`.
 
 ### Check Server Health
 
@@ -235,6 +236,9 @@ The API is hosted on the url *https://blog-aggregator-158858990102.europe-southw
 **URL**: `/v1/posts`
 
 **Method**: `GET`
+
+**Query Parameters**:
+- `limit` (integer, optional): The number of posts you want to list. Defaults to `10`.
 
 **Headers**:
 - `Authorization: ApiKey <key>`

@@ -77,7 +77,7 @@ func scrapeFeed(db *database.Queries, feed database.Feed, wg *sync.WaitGroup) {
 			FeedID:      feed.ID,
 		})
 		if err != nil {
-			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			if strings.Contains(err.Error(), "failed to execute SQL") {
 				continue
 			}
 			log.Printf("Couldn't create post: %v", err)
