@@ -321,7 +321,7 @@ $ curl -X GET "$host/v1/feeds?offset=0&limit=2"
   {
     "id":"ea9ba4e4-2025-428c-b778-3d3dbc180510",
     "created_at":"2024-09-05T14:45:48.25644086Z",
-    "updated_at":"2024-09-05T14:45:48.25644176Z,
+    "updated_at":"2024-09-05T14:45:48.25644176Z",
     "name":"CNN Top Stories",
     "url":"http://rss.cnn.com/rss/edition.rss",
     "user_id":"4dea0dbc-fb49-4358-ad08-93410cb94b37",
@@ -349,5 +349,17 @@ $ curl -X GET "$host/v1/feed_follows" -H "Authorization: ApiKey $apiKey"
     "updated_at":"2024-09-05T18:05:43.906955399Z"
   }
 ]
-$ curl -X GET "$host/v1/posts" -H "Authorization: ApiKey $apiKey"
+$ curl -X GET "$host/v1/posts?limit=1" -H "Authorization: ApiKey $apiKey"
+[
+  {
+    "id":"01eb942e-2539-4872-8149-1ec90bfce770",
+    "created_at":"2024-09-05T14:50:24.676224257Z",
+    "updated_at":"2024-09-05T14:50:24.676224531Z",
+    "title":"Russian authorities detain suspect over St. Petersburg cafe blast",
+    "url":"https://edition.cnn.com/webview/europe/live-news/russia-ukraine-war-news-04-03-23/index.html",
+    "description":"",
+    "published_at":null,
+    "feed_id":"ea9ba4e4-2025-428c-b778-3d3dbc180510"
+  }
+]
 ```

@@ -2,10 +2,9 @@ package main
 
 import (
 	"database/sql"
-	"time"
-
 	"github.com/eduvedras/Blog-Aggregator/internal/database"
 	"github.com/google/uuid"
+	"time"
 )
 
 type User struct {
@@ -101,6 +100,7 @@ type Post struct {
 
 func databasePostToPost(post database.Post) Post {
 	postId, _ := uuid.Parse(post.ID.(string))
+	feedId, _ := uuid.Parse(post.FeedID.(string))
 	return Post{
 		ID:          postId,
 		CreatedAt:   post.CreatedAt,
@@ -109,7 +109,7 @@ func databasePostToPost(post database.Post) Post {
 		Url:         post.Url,
 		Description: nullStringToStringPtr(post.Description),
 		PublishedAt: nullTimeToTimePtr(post.PublishedAt),
-		FeedID:      post.FeedID.(uuid.UUID),
+		FeedID:      feedId,
 	}
 }
 

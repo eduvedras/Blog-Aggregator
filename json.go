@@ -15,7 +15,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	w.WriteHeader(code)
 	w.Write(dat)
 }
