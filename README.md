@@ -2,7 +2,7 @@
 
 An API that allows users to aggregate all their favorite RSS blogs and feeds in one place. All you need to do is create an account and follow the feeds you like. If the feed you want does not exist in the database, you can create it by providing a name and a URL.
 
-Periodically, a scraper will retrieve posts from each feed URL and add them to the database, making them accessible to users who follow the feed. A command-line interface and a graphical user interface are under development, but for now, if you want to interact with the aggregator, you will need to make HTTP requests directly to the API endpoints.
+Periodically, a scraper will retrieve posts from each feed URL and add them to the database, making them accessible to users who follow the feed. A command-line interface for the API is available at [Blog-Aggregator-CLI](https://github.com/eduvedras/Blog-Aggregator-CLI) and a graphical user interface is under development, you can also make HTTP requests directly to the API endpoints.
 
 ## Motivation
 
@@ -178,13 +178,11 @@ To interact with the API, prepend this URL to the endpoints. For example, to che
 **Response**:
 ```json
 {
-  {
-    "id": "c834c69e-ee26-4c63-a677-a977432f9cfa",
-    "feed_id": "4a82b372-b0e2-45e3-956a-b9b83358f86b",
-    "user_id": "d6962597-f316-4306-a929-fe8c8651671e",
-    "created_at": "2021-05-01T00:00:00Z",
-    "updated_at": "2021-05-01T00:00:00Z"
-  } 
+  "id": "c834c69e-ee26-4c63-a677-a977432f9cfa",
+  "feed_id": "4a82b372-b0e2-45e3-956a-b9b83358f86b",
+  "user_id": "d6962597-f316-4306-a929-fe8c8651671e",
+  "created_at": "2021-05-01T00:00:00Z",
+  "updated_at": "2021-05-01T00:00:00Z"
 } 
 ```
 
